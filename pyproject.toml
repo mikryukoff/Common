@@ -1,0 +1,41 @@
+[project]
+name = "common"
+version = "0.1.0"
+description = "Шаблон FastAPI-проекта: слои, auth, MySQL, Docker"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "aiomysql>=0.3.2",
+    "alembic>=1.20.0",
+    "cryptography>=46.0.0",
+    "environs>=14.5.0",
+    "fastapi>=0.128.0",
+    "httpx>=0.28.0",
+    "loguru>=0.7.3",
+    "pydantic>=2.12.5",
+    "python-multipart>=0.0.21",
+    "sqlalchemy>=2.0.45",
+    "uvicorn>=0.40.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.2",
+    "pytest-asyncio>=1.2.0",
+    "ruff>=0.13.0",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["backend/tests"]
+asyncio_mode = "auto"
+markers = [
+    "integration: tests that call external services",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]

@@ -1,0 +1,45 @@
+---
+description: "Python: imports, logging, error handling, exceptions"
+globs: ["**/*.py"]
+alwaysApply: false
+---
+
+# Python Standards
+
+## Imports
+- Use imports from repo root only: `backend.app.*`.
+- Group imports in order: stdlib, third-party, local.
+- Never use relative imports beyond one level.
+
+## Logging
+- Use `shared.logging_config.get_logger()` only.
+- Never use `print` or `logging.basicConfig` in modules.
+- Mask secrets, cookies, request bodies before logging.
+
+## Errors
+- Subclass `ApplicationError` for all application errors.
+- Base classes live in `shared/exceptions.py`; domain-specific errors in
+  `application/exceptions.py`.
+- Define `error_code`, `status_code`, `details` on each error.
+- Never swallow exceptions with a bare `except:`.
+- Never return a raw `dict` instead of `ErrorResponse`.
+
+## Examples
+```python
+# Correct
+from pathlib import Path
+
+from backend.app.application.exceptions import ApplicationError
+from backend.app.shared.logging_config import get_logger
+
+logger = get_logger(__name__)
+
+async def read_settings(path: Path) -> dict:
+    logger.info("loading_config path={}", path)
+    ...
+
+# Wrong
+import logging
+print("loading")  # bare print
+logger = logging.getLogger(__name__)  # basicConfig not allowed
+```

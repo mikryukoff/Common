@@ -1,0 +1,33 @@
+---
+description: "Pytest test files: structure and conventions"
+globs: ["backend/tests/**"]
+alwaysApply: false
+---
+
+# Testing Standards
+
+## File layout
+- Test files: `test_*.py`.
+- One behavior per test function.
+
+## Writing
+- Use plain `assert`.
+- Add tests for new parsing, export, or serialization logic.
+- Mark tests hitting external services with `@pytest.mark.integration`.
+- Unit tests mock repositories; no live database required.
+
+## Examples
+
+```python
+    # Correct
+    def test_normalize_strips_whitespace():
+        assert normalize_pipeline_name("  Pipe-1  ") == "pipe-1"
+
+    @pytest.mark.integration
+    async def test_fetch_from_yandex():
+        ...
+
+    # Wrong
+    def test_stuff():
+        assert True
+```

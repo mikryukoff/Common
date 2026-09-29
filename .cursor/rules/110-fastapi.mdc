@@ -1,0 +1,42 @@
+---
+description: "FastAPI: routers, schemas, DI, httpOnly cookie auth"
+globs: ["backend/app/api/**"]
+alwaysApply: false
+---
+
+# FastAPI Conventions
+
+## Routers
+- Keep routers thin: validate input, call `application`, return schema.
+- Never put business logic or direct DB access in routers.
+- Place schemas in `api/schemas/`, handlers in `api/routers/`.
+
+## Auth
+- Use httpOnly cookies for access and refresh tokens.
+- Never send Bearer tokens in the UI.
+- Use `get_current_user` and `require_roles(...)` as DI.
+
+## Dependencies
+- Assemble services in the API layer's `dependencies` module.
+- Access the database only through repositories.
+
+## Responses and errors
+- Return `ErrorResponse` via `register_exception_handlers`.
+- Never return a raw `dict` instead of the contract.
+
+## Examples
+```python
+# Correct
+@router.get("/items/{item_id}", response_model=ItemOut)
+async def get_item(
+    item_id: int,
+    user: UserORM = Depends(get_current_user),
+    service: ItemService = Depends(get_item_service),
+) -> ItemOut:
+    return await service.get(item_id, user)
+
+# Wrong — business logic and raw DB access in router
+@router.get("/items/{item_id}")
+async def get_item(item_id: int, db: AsyncSession = Depends(get_async_session)):
+    return await db.execute(select(ItemORM).where(ItemORM.id == item_id))
+```

@@ -1,0 +1,55 @@
+---
+description: "Docker: Dockerfile, compose, dockerignore conventions"
+globs: ["**/Dockerfile", "**/docker-compose.yml", "**/.dockerignore"]
+alwaysApply: false
+---
+
+# Docker Rules
+
+## Dockerfile
+- Use multi-stage build: `builder` -> `runtime`.
+- Use `python:3.13-slim` as base — never `alpine`.
+- Copy `uv` from `ghcr.io/astral-sh/uv:<pinned>` — never `latest`.
+- Order layers: `pyproject.toml` + `uv.lock` -> `uv sync --locked --no-install-project --no-dev` -> `COPY . .` -> `uv sync --locked --no-dev`.
+- Set ENV: `UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy UV_NO_DEV=1`, `PYTHONPATH=/app`.
+- Create a non-root `appuser` and switch via `USER appuser`.
+- Add `HEALTHCHECK` hitting `http://localhost:8000/health`.
+- Set `CMD` to `uvicorn backend.app.main:app --host 0.0.0.0 --port 8000`.
+
+## docker-compose.yml
+- Load secrets only via `env_file: [.env]` — never hardcode.
+- Declare `depends_on` with `condition: service_healthy` for MySQL.
+- Add healthchecks: MySQL — `mysqladmin ping`, backend — `curl -f /health`.
+- Mount volumes for MySQL data, `data/`, and logs.
+- Expose backend as `127.0.0.1:8001:8000` — never `0.0.0.0:8000`.
+- Put Adminer under a `tools` profile.
+- Pin image versions (`mysql:8.0`, not `latest`).
+- Prefer `name: ${COMPOSE_PROJECT_NAME:-app}` over hardcoded `container_name`.
+
+## .dockerignore
+**Always include** at minimum:
+```text
+.venv/
+.git/
+.env
+data/
+logs/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+```
+
+## Examples
+```dockerfile
+# Correct — dependencies cached before source copy
+COPY pyproject.toml uv.lock ./
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --locked --no-install-project --no-dev
+COPY . .
+RUN uv sync --locked --no-dev
+
+# Wrong — invalidates cache on every code change
+COPY . .
+RUN pip install -r requirements.txt
+```

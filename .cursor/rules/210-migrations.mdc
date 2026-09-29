@@ -1,0 +1,29 @@
+---
+description: "Database schema changes via Alembic migrations only"
+globs: ["backend/alembic/**", "backend/app/infrastructure/**"]
+alwaysApply: false
+---
+
+# Database Schema Rules
+
+## Migrations
+- Create schema changes only as Alembic revisions in `backend/alembic/versions/`.
+- Never modify tables by hand, even in dev.
+- Generate with `uv run alembic revision --autogenerate -m "<message>"`.
+
+## Repositories
+- Access DB only through repositories in `backend/app/infrastructure/`.
+- No raw SQL in `api/` or `application/`. Keep queries in repositories.
+
+## Examples
+```bash
+# Correct
+uv run alembic revision --autogenerate -m "add pipeline.diameter"
+uv run alembic upgrade head
+```
+
+```python
+# Wrong — raw SQL outside infrastructure
+async def get_pipeline(db: AsyncSession, pid: int):
+    return await db.execute(text("SELECT * FROM pipelines WHERE id = :id"), {"id": pid})
+```

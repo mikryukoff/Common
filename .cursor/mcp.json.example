@@ -1,0 +1,6 @@
+# Optional local MCP servers for Cursor.
+# Copy to mcp.json and edit paths/servers for your machine.
+# mcp.json is gitignored — do not commit machine-specific config.
+{
+  "mcpServers": {}
+}

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>App</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<main class="page">
+    <section id="authSection" class="panel">
+        <h1>App</h1>
+        <p class="muted">Шаблон: логин через httpOnly cookies</p>
+        <label>
+            Логин
+            <input id="username" type="text" autocomplete="username">
+        </label>
+        <label>
+            Пароль
+            <input id="password" type="password" autocomplete="current-password">
+        </label>
+        <button id="loginBtn" type="button">Войти</button>
+        <p id="authMsg" class="status" aria-live="polite"></p>
+    </section>
+
+    <section id="appSection" class="panel hidden">
+        <header class="topbar">
+            <div>
+                <h1>Workspace</h1>
+                <p id="userInfo" class="muted"></p>
+            </div>
+            <button id="logoutBtn" type="button" class="muted-btn">Выйти</button>
+        </header>
+        <p>API: <a href="/docs">/docs</a> · health: <a href="/health">/health</a></p>
+    </section>
+</main>
+<script src="/js/api.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>

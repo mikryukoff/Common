@@ -1,0 +1,47 @@
+---
+description: "Core standards: style, forbidden patterns, git conventions"
+alwaysApply: true
+---
+
+# Core Standards
+
+## Style
+- Use type hints on ALL functions and methods.
+- Write `str | None` instead of `Optional[str]`.
+- Use f-strings for formatting, `pathlib.Path` instead of `os.path`.
+- Ensure all I/O operations are `async def`.
+- Keep max line length at 88.
+
+## Forbidden
+- Never use `pip`, `poetry`, `requirements.txt`. **Use** `uv`.
+- Never use `requests`, `urllib`. **Use** `httpx`.
+- Never use `eval()`, `exec()`.
+- Never use mutable default arguments (`def f(x=[])`).
+- Never use `import *`.
+- Never use bare `except:` without specifying the exception.
+- Never hardcode secrets, tokens, or keys.
+
+## Git
+- Always use this exact commit pattern:
+```bash
+    git add "<file1>" "<file2>" && git commit -m "<concise message>"
+```
+- Write single-line commit messages only.
+- Never use --trailer or any other flags.
+- Never use heredoc (<<EOF) or multi-line messages.
+- Never wrap the message in extra quotes beyond what is needed.
+- Always use Conventional Commits: feat:, fix:, refactor:, chore:.
+- List files explicitly — never use git add . or git add -A.
+- Never commit .env, keys, logs, or user data.
+
+## Examples
+```python
+    # Correct
+    async def fetch_pipeline(client: httpx.AsyncClient, pipeline_id: int) -> Pipeline | None:
+        ...
+
+    # Wrong
+    def fetch_pipeline(client, pipeline_id):
+        import requests
+        ...
+```

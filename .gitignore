@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[oc]
+*.egg-info
+build/
+dist/
+wheels/
+.pytest_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv
+
+# Secrets and local data
+.env
+data/logs/
+data/users/
+data/uploads/
+logs/
+*.enc
+
+# Local IDE / MCP overrides (keep examples in repo)
+.cursor/mcp.json

@@ -1,0 +1,34 @@
+---
+description: "Domain layer: pure business logic without frameworks"
+globs: ["backend/app/domain/**"]
+alwaysApply: false
+---
+
+# Domain Layer Rules
+
+## Purity
+- Write pure Python only — no `fastapi`, `sqlalchemy`, `pydantic` imports.
+- Keep domain models, parsers, and reference data here.
+- Never import from `infrastructure` or `api`.
+- Never depend on HTTP, DB, or filesystem.
+
+## Direction of dependencies
+- Respect the rule: `api -> application -> domain <- infrastructure`.
+- Ensure `domain` knows nothing about outer layers.
+
+## Examples
+```python
+# Correct — pure function, no framework imports
+from backend.app.domain.models.user import UserRole
+
+def role_is_admin(role: UserRole) -> bool:
+    return role == UserRole.ADMIN
+
+# Wrong — leaks framework into domain
+from fastapi import HTTPException
+
+def role_is_admin(role: str) -> bool:
+    if not role:
+        raise HTTPException(status_code=400)
+    ...
+```
